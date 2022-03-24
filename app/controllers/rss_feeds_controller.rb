@@ -1,7 +1,7 @@
 class RssFeedsController < ApplicationController
   def show
     @subscription = Subscription.includes(:user)
-                                .includes(subscriptable: %i[twitter_user youtube_channel website])
+                                .includes(subscriptable: %i[twitter_user youtube_channel website discord_channel])
                                 .find_by(uuid: params[:uuid])
     redirect_to root_path and return unless @subscription
 
@@ -27,6 +27,11 @@ class RssFeedsController < ApplicationController
                   subscriptable: @subscription.subscriptable,
                   user: @subscription.user
                 )
+              when DiscordChannel
+                Discord::LoadRssItemsService.call(
+                  subscriptable: @subscription.subscriptable,
+                  user: @subscription.user
+                )
               else
                 redirect_to root_path and return
               end
@@ -38,7 +43,7 @@ class RssFeedsController < ApplicationController
   end
 
   def combined
-    @user = User.includes(subscriptions: { subscriptable: %i[twitter_user youtube_channel] }).find_by(uuid: params[:uuid])
+    @user = User.includes(subscriptions: { subscriptable: %i[twitter_user youtube_channel discord_channel] }).find_by(uuid: params[:uuid])
     redirect_to root_path and return unless @user
 
     service = LoadCombinedEntriesService.call(

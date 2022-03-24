@@ -1,78 +1,52 @@
-class Website::CreateSubscriptionService
-  include AppService
-
-  attr_reader :subscription
-
+class Website::CreateSubscriptionService < CreateSubscriptionService
   def initialize(user:, url:)
-    @user = user
-    @url = url
-  end
-
-  def call
-    load_url_data
-    return unless success?
-
-    load_website_details
-    return unless success?
-
-    Subscription.transaction do
-      find_or_create_website
-      return unless success?
-
-      subscription_exists?
-      return unless success?
-
-      @subscription = user.subscriptions.build(subscriptable: website)
-
-      if subscription.save
-        SyncWebsiteJob.perform_async(website.id) if website.should_load_tweets?
-      else
-        errors.merge!(subscription.errors)
-      end
-    end
+    super(user: user, input: url, subscriptable_class: Website)
   end
 
   private
 
-  attr_reader :user, :url, :data, :rss_url, :name, :image_url, :website
+  attr_reader :data, :name, :image_url, :rss_url
 
-  def load_website_details
-    document = Nokogiri::HTML.parse(data)
-    precomposed = document.css("link[rel='apple-touch-icon-precomposed']").first
-    non_precomposed = document.css("link[rel='apple-touch-icon']").first
+  def process_input
+    load_url_data
+    return unless success?
 
-    @name = document.css("title")&.children&.first&.to_s
-    @image_url = (precomposed || non_precomposed)&.attributes["href"]&.value # rubocop:disable Lint/SafeNavigationChain
-
-    errors.add(:base, "no name found") and return unless name
-
-    feeds_service = ::Website::FindRssFeedsService.call(url: url)
-    errors.merge!(feeds_service.errors) and return unless feeds_service.success?
-
-    @rss_url = feeds_service.rss_feeds.first&.href
-    errors.add(:base, "no RSS URL found") and return unless name
+    parse_url_data
+    return unless success?
   end
 
   def load_url_data
-    loader = LoadUrlDataService.call(url: url)
+    loader = LoadUrlDataService.call(url: input)
     errors.merge!(loader.errors) and return unless loader.success?
 
     @data = loader.data
     errors.add(:base, "URL has no data") unless data
   end
 
-  def subscription_exists?
-    errors.add(:base, "subscription already exists") if user.subscriptions
-                                                            .exists?(
-                                                              subscriptable_type: "Website",
-                                                              subscriptable_id: website.id
-                                                            )
+  def parse_url_data
+    document = Nokogiri::HTML.parse(data)
+
+    @name = document.css("title")&.children&.first&.to_s
+    errors.add(:base, "no name found") and return unless name
+
+    precomposed = document.css("link[rel='apple-touch-icon-precomposed']").first
+    non_precomposed = document.css("link[rel='apple-touch-icon']").first
+    if precomposed || non_precomposed
+      @image_url = (precomposed || non_precomposed)&.attributes["href"]&.value # rubocop:disable Lint/SafeNavigationChain
+    end
+
+    feeds_service = ::Website::FindRssFeedsService.call(url: input)
+    errors.merge!(feeds_service.errors) and return unless feeds_service.success?
+
+    @rss_url = feeds_service.rss_feeds&.first&.href
+    errors.add(:base, "no RSS URL found") and return unless rss_url
   end
 
-  def find_or_create_website
-    return if (@website = Website.find_by(rss_url: rss_url))
+  def find_subscriptable
+    @subscriptable = Website.find_by(rss_url: rss_url)
+  end
 
-    @website = Website.new(rss_url: rss_url, url: url, name: name, image_url: image_url)
-    errors.merge!(website.errors) unless website.save
+  def build_subscriptable
+    @subscriptable = Website.new(rss_url: rss_url, url: input, name: name, image_url: image_url)
   end
 end

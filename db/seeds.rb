@@ -1,4 +1,4 @@
-user = User.create!(email: "rien@croonenborghs.net", password: "sparrows are fatties", password_confirmation: "sparrows are fatties")
+user = User.create!(email: ENV["EMAIL"], password: ENV["PASSWORD"], password_confirmation: ENV["PASSWORD"])
 
 Twitter::CreateSubscriptionService.call(user: user, url_or_handle: "https://twitter.com/TheOnion")
 Twitter::CreateSubscriptionService.call(user: user, url_or_handle: "https://twitter.com/joelycett")
@@ -22,3 +22,7 @@ YoutubeChannel::CreateSubscriptionService.call(user: user, url: "https://www.you
 YoutubeChannel::CreateSubscriptionService.call(user: user, url: "https://www.youtube.com/c/OwlKitty")
 
 Website::CreateSubscriptionService.call(user: user, url: "https://badjokesbyjeff.tumblr.com")
+
+Discord::CreateSubscriptionService.call(user: user, channel_id: "945298231716368394")
+Discord::CreateSubscriptionService.call(user: user, channel_id: "946059887828402246")
+Discord::CreateSubscriptionService.call(user: user, channel_id: "945838965699780668")

@@ -8,20 +8,6 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -36,6 +22,41 @@ CREATE TABLE public.ar_internal_metadata (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL
 );
+
+
+--
+-- Name: discord_channels; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.discord_channels (
+    id bigint NOT NULL,
+    channel_id character varying NOT NULL,
+    guild_id character varying NOT NULL,
+    name character varying NOT NULL,
+    description character varying,
+    last_loaded timestamp(6) without time zone,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: discord_channels_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.discord_channels_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: discord_channels_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.discord_channels_id_seq OWNED BY public.discord_channels.id;
 
 
 --
@@ -397,6 +418,13 @@ ALTER SEQUENCE public.youtube_rss_entries_id_seq OWNED BY public.youtube_rss_ent
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY public.discord_channels ALTER COLUMN id SET DEFAULT nextval('public.discord_channels_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY public.filters ALTER COLUMN id SET DEFAULT nextval('public.filters_id_seq'::regclass);
 
 
@@ -462,6 +490,14 @@ ALTER TABLE ONLY public.youtube_rss_entries ALTER COLUMN id SET DEFAULT nextval(
 
 ALTER TABLE ONLY public.ar_internal_metadata
     ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: discord_channels_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.discord_channels
+    ADD CONSTRAINT discord_channels_pkey PRIMARY KEY (id);
 
 
 --
@@ -542,6 +578,20 @@ ALTER TABLE ONLY public.youtube_channels
 
 ALTER TABLE ONLY public.youtube_rss_entries
     ADD CONSTRAINT youtube_rss_entries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_discord_channels_on_channel_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_discord_channels_on_channel_id ON public.discord_channels USING btree (channel_id);
+
+
+--
+-- Name: index_discord_channels_on_last_loaded; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_discord_channels_on_last_loaded ON public.discord_channels USING btree (last_loaded);
 
 
 --
@@ -803,6 +853,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220312052726'),
 ('20220317080236'),
 ('20220317231447'),
-('20220319183509');
+('20220319183509'),
+('20220324075856');
 
 

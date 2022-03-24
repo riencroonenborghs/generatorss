@@ -49,11 +49,13 @@ class CreateRssItemsService
     RssItem.transaction do
       subscriptable.rss_items.create!(
         new_entries.map do |entry|
+          description = entry.content || entry.summary
+          title = entry.title || description.split(".")[0]
           hash = {
-            title: entry.title,
+            title: title.gsub("\n", ""),
             link: entry.url,
             published_at: entry.published,
-            description: entry.content,
+            description: description,
             guid: entry.entry_id
           }
           %i[media_title media_url media_type media_width media_height media_thumbnail_url media_thumbnail_width media_thumbnail_height enclosure_length enclosure_type enclosure_url itunes_duration itunes_episode_type itunes_author itunes_explicit itunes_image].each do |media|

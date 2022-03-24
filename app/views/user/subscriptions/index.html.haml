@@ -20,6 +20,9 @@
         - elsif subscription.subscriptable.is_a?(Website)
           - website = subscription.subscriptable
           = render "website", website: website, subscription: subscription
+        - elsif subscription.subscriptable.is_a?(DiscordChannel)
+          - discord_channel = subscription.subscriptable
+          = render "discord_channel", discord_channel: discord_channel, subscription: subscription
 
 
     - if @subscription_count > 10

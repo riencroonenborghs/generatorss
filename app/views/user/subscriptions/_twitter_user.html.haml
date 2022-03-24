@@ -1,0 +1,27 @@
+%li.list-group-item
+  .d-flex.flex-row.justify-content-between
+    .d-flex.flex-row
+      - if twitter_user.profile_image_url
+        = image_tag twitter_user.profile_image_url, class: "rounded", style: "width: 75px;"
+      .d-flex.flex-column(class="#{'ps-4' if twitter_user.profile_image_url}")
+        %div
+          = fa_brands "twitter", options: { class: "twitter" }, size: 1
+          - if twitter_user.url
+            = link_to twitter_user.name, twitter_user.url, target: "_blank"
+            - if twitter_user.verified
+              = fa_solid "check-circle", size: 1, options: { class: "twitter" }
+          - else
+            = twitter_user.name
+            - if twitter_user.verified
+              = fa_solid "check-circle", size: 1, options: { class: "twitter" }
+        .fw-lighter
+          = "@" + twitter_user.username
+        %small.fw-lighter
+          = twitter_user.description
+    .d-flex.flex-column.my-twitter-feeds--manage.align-items-end
+      = button_to user_subscription_path(subscription), method: :delete, class: "text-danger btn" do
+        = fa_solid "trash", size: 1
+        Remove
+      = link_to rss_feed_path(subscription.uuid, format: :rss), target: "_blank", class: "rss" do
+        = fa_solid "rss", size: 1
+        RSS Feed

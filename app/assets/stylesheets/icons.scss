@@ -1,0 +1,76 @@
+$twitter-blue: #1d9bf0;
+$rss-orange: #ee802f;
+$youtube-red: #c00;
+$website: #6b9d4d;
+$tumblr: #34526f;
+$blogger: #f59440;
+$medium: black;
+
+.twitter {
+  color: $twitter-blue;
+}
+
+.rss {
+  color: $rss-orange;
+}
+
+.youtube {
+  color: $youtube-red;
+}
+
+.website {
+  color: $website
+}
+
+.tumblr {
+  color: $tumblr;
+}
+
+.blogger {
+  color: $blogger;
+}
+
+.medium-brand {
+  color: $medium;
+}
+
+.icon.heart {
+  color: #de8282;
+}
+.icon.signed-up {
+  color: #1d9bf0;
+}
+.icon.monster-rss {
+  color: #409360;
+}
+.icon.refresh {
+  color: #799bed;
+}
+.icon.filters {
+  color: rgb(192, 119, 194);
+}
+
+.fa-size-1-2 {
+  font-size: 0.75rem;
+}
+
+
+.fa-size-1 {
+  font-size: 1rem;
+}
+
+.fa-size-2 {
+  font-size: 2rem;
+}
+
+.fa-size-3 {
+  font-size: 3rem;
+}
+
+.fa-size-4 {
+  font-size: 4rem;
+}
+
+.fa-size-5 {
+  font-size: 5rem;
+}

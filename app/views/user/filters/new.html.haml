@@ -1,0 +1,9 @@
+- content_for :title do
+  \- Add new Filter
+
+.container
+  %h3 #{link_to "Filters", user_filters_path}
+  %h4 Add new Filter
+
+  .mt-4
+    = render "form"

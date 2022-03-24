@@ -1,0 +1,40 @@
+%nav.navbar.navbar-expand-lg.navbar-light.bg-light(class="#{'bg-white' unless user_signed_in?} #{'navbar--xl' unless mobile? || user_signed_in?} #{'border-bottom' if user_signed_in?}")
+  .container-fluid
+    = link_to root_path, class: "brand" do
+      .d-flex.align-items-center
+        = fa_solid "rss", options: { class: "rss" }
+        %h1.ps-2 GeneratoRSS
+    %button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+      = fa_solid "bars"
+    .collapse.navbar-collapse#navbarSupportedContent
+      - if user_signed_in?
+        %ul.navbar-nav.me-auto.mb-2.mb-lg-0.ms-4
+          %li.nav-item
+            = link_to "Subscriptions", user_subscriptions_path, class: "nav-link #{'active' if active_page?(user_subscriptions_path)}"
+          %li.nav-item
+            = link_to "Combined RSS Feed", combined_rss_feed_path(current_user.uuid, format: :rss), class: "nav-link", target: "_blank"
+          %li.nav-item
+            = link_to "Filters", user_filters_path, class: "nav-link #{'active' if active_page?(user_filters_path)}"
+      - else
+        %ul.navbar-nav.me-auto.mb-2.mb-lg-0
+          -#
+            %li.nav-item
+              = link_to "Home", root_path, class: "nav-link #{'active' if current_page?(root_path)}"
+            %li.nav-item
+              = link_to "Features", features_path, class: "nav-link #{'active' if current_page?(features_path)}"
+            %li.nav-item
+              = link_to "Pricing", pricing_path, class: "nav-link #{'active' if current_page?(pricing_path)}"
+            %li.nav-item
+              %a.nav-link(href="#") Sign up
+      .d-flex        
+        - if user_signed_in?
+          %ul.navbar-nav.align-items-center           
+            %li.nav-item
+              .nav-link
+                = button_to destroy_user_session_path, method: :delete, title: "Sign out", class: "btn btn-primary" do
+                  Sign out
+        - else
+          %ul.navbar-nav.me-auto.mb-2.mb-lg-0
+            %li.nav-item
+              = link_to new_user_session_path, title: "Sign in", class: "btn btn-primary" do
+                Sign in

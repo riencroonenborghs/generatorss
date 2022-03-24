@@ -1,0 +1,13 @@
+nav.pagination {
+  .page, .next, .last, .first, .prev {
+    @extend .btn;
+    @extend .btn-outline-light;
+    @extend .me-2;
+  }
+  .page.gap {
+    @extend .border-0;
+  }
+  .page.current {
+    @extend .btn-primary;
+  }
+}

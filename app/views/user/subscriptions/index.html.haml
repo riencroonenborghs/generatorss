@@ -1,0 +1,29 @@
+- content_for :title do
+  \- Subscriptions
+
+.container.my-twitter-feeds
+  %h3 Subscriptions
+  %p
+    = link_to new_user_subscription_path do
+      = fa_solid "plus", size: 1
+      Add a new one
+
+  .mt-4
+    %ul.list-group.list-group-flush
+      - @subscriptions.each do |subscription|
+        - if subscription.subscriptable.is_a?(TwitterUser)
+          - twitter_user = subscription.subscriptable
+          = render "twitter_user", twitter_user: twitter_user, subscription: subscription
+        - elsif subscription.subscriptable.is_a?(YoutubeChannel)
+          - youtube_channel = subscription.subscriptable
+          = render "youtube_channel", youtube_channel: youtube_channel, subscription: subscription
+        - elsif subscription.subscriptable.is_a?(Website)
+          - website = subscription.subscriptable
+          = render "website", website: website, subscription: subscription
+
+
+    - if @subscription_count > 10
+      .mt-4
+        .d-flex.flex-row.justify-content-center
+          = paginate @subscriptions
+            

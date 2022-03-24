@@ -1,0 +1,11 @@
+- if flash[:alert] || flash[:notice]
+  .d-flex.flex-row.justify-content-end.position-sticky.bottom-0
+    .m-4.toast.align-items-center.text-white.border-0.show(role="alert" aria-live="assertive" aria-atomic="true" class="#{flash[:alert] ? 'bg-danger' : 'bg-success'}")    
+      .d-flex
+        .toast-body
+          - if flash[:alert]
+            = flash[:alert]
+          - if flash[:notice]
+            = flash[:notice]
+        %button.btn-close.btn-close-white.me-2.m-auto(type="button" data-bs-dismiss="toast" aria-label="Close")
+        

@@ -1,0 +1,9 @@
+sync_active_subscriptions_job:
+  cron: "*/15 * * * *"
+  class: "SyncSubscriptionsJob"
+  queue: generatorss
+
+clean_old_tweets_job:
+  cron: "0 0 * * *"
+  class: "CleanOldRssItemsJob"
+  queue: generatorss

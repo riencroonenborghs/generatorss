@@ -1,0 +1,22 @@
+.navbar {
+  a.brand {
+    color: unset !important;
+    
+    h4 {
+      margin-bottom: 0px;      
+    }
+  }
+  .navbar-toggler {
+    border: unset;
+  }
+  &--xl {
+    padding: 3rem 6rem;
+    padding-bottom: 2rem;
+  }
+
+  .nav-item {
+    a.active {
+      font-weight: bold;
+    }
+  }
+}

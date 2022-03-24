@@ -1,0 +1,29 @@
+- content_for :title do
+  \- Filters
+
+.container
+  %h3 Filters
+  %p
+    = link_to new_user_filter_path do
+      = fa_solid "plus", size: 1
+      Add a new one
+
+  %table.table.is-hoverable.mt-4
+    %tbody
+      - @filters.each_with_index do |filter, index|
+        %tr
+          %td(style="width: 50px;")
+            = link_to edit_user_filter_path(filter.id) do
+              = fa_solid "edit", size: 1
+          %td(style="width: 50px;")
+            = button_to user_filter_path(filter.id), method: :delete, data: { confirm: "Are you sure?" }, class: "text-danger btn btn-white p-0" do
+              = fa_solid "trash", size: 1
+          %td
+            = filter.human_readable
+            - if index + 1 < @filters.size
+              %span.fw-lighter &nbsp;OR
+
+  - if @filter_count > 10
+    .mt-4
+      .d-flex.flex-row.justify-content-center
+        = paginate @filters

@@ -1,0 +1,12 @@
+= form_with(model: @filter, url: @filter.persisted? ? user_filter_path(@filter) : user_filters_path) do |f|
+  .row
+    .col-12.col-lg-2
+      = f.select :comparison, Filter::COMPARISONS, {}, class: "form-select #{'border-danger' if @filter.errors[:comparison].any?}"
+    .col-12.col-lg-5
+      = f.text_field :value, autofocus: true, placeholder: "e.g. kittens", class: "form-control #{'border-danger' if @filter.errors[:value].any?}"
+      - if @filter.errors[:value].any?
+        .text-danger
+          = @filter.errors[:value].join(', ')
+    .col-12.col-lg-1
+      = f.submit "#{@filter.persisted? ? 'Update' : 'Create'}", class: "btn btn-primary"
+

@@ -1,0 +1,42 @@
+@import 'bootstrap/scss/bootstrap';
+// @import 'bootstrap-icons/font/bootstrap-icons';
+
+@import "fontawesome/fontawesome.scss";
+@import "fontawesome/solid.scss";
+@import "fontawesome/brands.scss";
+@import "fontawesome/regular.scss";
+
+@import "icons.scss";
+@import "navbar.scss";
+@import "my_twitter_feeds.scss";
+@import "pagination.scss";
+
+
+a {
+  @extend .text-decoration-none;
+}
+
+.container {
+  @extend .pt-4;
+}
+
+.fs-7 {
+  font-size: 0.75rem;
+}
+.fs-8 {
+  font-size: 0.5rem;
+}
+
+.center-horizontal {
+  @extend .d-flex;
+  @extend .flex-row;
+  @extend .justify-content-center;
+  width: calc(100vw);
+}
+
+.center-vertical {
+  @extend .d-flex;
+  @extend .flex-column;
+  @extend .justify-content-center;
+  height: calc(100vh);
+}

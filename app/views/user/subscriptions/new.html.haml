@@ -1,0 +1,52 @@
+- content_for :title do
+  \- Add new Subscriptions
+
+.container
+  %h3 #{link_to "Subscriptions", user_subscriptions_path} 
+  %h4 Add new Subscriptions
+
+  .mt-4
+    = form_with(scope: :twitter, url: user_subscriptions_path) do |f|
+      .row
+        .col-12.col-lg-5
+          = f.label :url_or_handle, "Twitter URL or handle", class: "form-label"
+          = f.text_field :url_or_handle, autofocus: true, placeholder: "e.g. http://twitter.com/twitter or @twitter", class: "form-control", value: @url_or_handle
+        .col-12.col-lg-3.mt-4.pt-2
+          %button.btn.btn-outline-primary(type="submit")
+            = fa_brands "twitter", options: { class: "twitter" }, size: 1
+            Add Twitter User
+
+  - if @service.is_a?(Twitter::CreateSubscriptionService) && @service&.failure?
+    .text-danger
+      = @service.errors.full_messages.join(", ")
+
+
+  .mt-4
+    = form_with(scope: :youtube_channel, url: user_subscriptions_path) do |f|
+      .row
+        .col-12.col-lg-5
+          = f.label :url, "Youtube Channel URL", class: "form-label"
+          = f.text_field :url, autofocus: true, placeholder: "e.g. https://www.youtube.com/c/OrdinarySausage", class: "form-control", value: @url
+        .col-12.col-lg-3.mt-4.pt-2
+          %button.btn.btn-outline-primary(type="submit")
+            = fa_brands "youtube", options: { class: "youtube" }, size: 1
+            Add Youtube Channel
+
+  - if @service.is_a?(YoutubeChannel::CreateSubscriptionService) && @service&.failure?
+    .text-danger
+      = @service.errors.full_messages.join(",")
+
+  .mt-4
+    = form_with(scope: :website, url: user_subscriptions_path) do |f|
+      .row
+        .col-12.col-lg-5
+          = f.label :url, "Website URL", class: "form-label"
+          = f.text_field :url, autofocus: true, placeholder: "e.g. https://badjokesbyjeff.tumblr.com", class: "form-control", value: @url
+        .col-12.col-lg-3.mt-4.pt-2
+          %button.btn.btn-outline-primary(type="submit")
+            = fa_solid "link", options: { class: "website" }, size: 1
+            Add Website
+
+  - if @service.is_a?(Website::CreateSubscriptionService) && @service&.failure?
+    .text-danger
+      = @service.errors.full_messages.join(",")

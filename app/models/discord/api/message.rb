@@ -23,11 +23,11 @@ class Discord::Api::Message < Struct.new(:id, :content, :embeds, :timestamp, key
   def as_rss_item
     link = embeds.any? ? embeds.first.url : "http://foo.bar.baz"
 
-    {
+    RssItem.new(
       title: content,
       link: link,
       published_at: timestamp,
       guid: id
-    }
+    )
   end
 end

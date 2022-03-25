@@ -1,107 +1,235 @@
 require 'rails_helper'
 
 RSpec.describe CreateRssItemsService, type: :service do
-  let(:youtube_channel) { create :youtube_channel, :unloaded }
-
-  let(:subject) { described_class.call(subscriptable: youtube_channel) }
-  let(:data) { load_data("youtube_channels/rss_entries.xml") }
-
-  before do
-    loader = double
-    allow(loader).to receive(:data).and_return(data)
-    allow(loader).to receive(:success?).and_return(true)
-    allow(LoadUrlDataService).to receive(:call).and_return(loader)
-  end
-
-  def create_rss_entries(number)
-    parsed_data = Feedjira.parse(data)
-    entries = parsed_data.entries
-
-    youtube_channel.rss_items.create!(
-      entries.slice(0, number).map do |entry|
-        {
-          title: entry.title,
-          link: entry.url,
-          published_at: entry.published,
-          description: entry.content,
-          # media: build_media(entry),
-          guid: entry.entry_id
-        }
-      end
-    )
-  end
-
-  shared_examples "the service fails with error" do |error|
-    it "fails" do
-      expect(subject.failure?).to be true
-    end
-
-    it "has the error" do
-      expect(subject.errors.full_messages).to include error
-    end
-  end
+  let(:subscriptable) { create :twitter_user, last_loaded: nil }
+  subject { described_class.new(subscriptable: subscriptable) }
 
   describe "#call" do
-    context "when url data loader fails" do
+    context "when entry has content" do
       before do
-        object = Twitter::Api::Client.new
-        object.errors.add(:base, "Some error")
-        errors = object.errors
-
-        loader = double
-        allow(loader).to receive(:errors).and_return(errors)
-        allow(loader).to receive(:success?).and_return(false)
-        allow(LoadUrlDataService).to receive(:call).and_return(loader)
+        entries = [
+          Struct.new(:title, :link, :published_at, :content, :guid).new(
+            "title", "link", Time.zone.now, "content", "guid"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
       end
 
-      it_behaves_like "the service fails with error", "Some error"
+      it "sets the description" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.description).to eq "content"
+      end
     end
 
-    context "when url data loader has no data" do
+    context "when entry has summary" do
       before do
-        loader = double
-        allow(loader).to receive(:data).and_return(nil)
-        allow(loader).to receive(:success?).and_return(true)
-        allow(LoadUrlDataService).to receive(:call).and_return(loader)
+        entries = [
+          Struct.new(:title, :link, :published_at, :summary, :guid).new(
+            "title", "link", Time.zone.now, "summary", "guid"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
       end
 
-      it_behaves_like "the service fails with error", "URL has no data"
+      it "sets the description" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.description).to eq "summary"
+      end
     end
 
-    context "when feedjira parsing fails" do
+    context "when entry has description" do
       before do
-        allow(Feedjira).to receive(:parse).and_return(nil)
+        entries = [
+          Struct.new(:title, :link, :published_at, :description, :guid).new(
+            "title", "link", Time.zone.now, "description", "guid"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
       end
 
-      it_behaves_like "the service fails with error", "could not parse RSS data"
+      it "sets the description" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.description).to eq "description"
+      end
     end
 
-    context "when feedjira has no entries" do
+    context "when entry has url" do
       before do
-        parsed_data = double
-        allow(parsed_data).to receive(:entries).and_return nil
-        allow(Feedjira).to receive(:parse).and_return(parsed_data)
+        entries = [
+          Struct.new(:title, :url, :published_at, :description, :guid).new(
+            "title", "url", Time.zone.now, "description", "guid"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
       end
 
-      it_behaves_like "the service fails with error", "no RSS entries found"
-    end
-
-    context "when some rss entries exist" do
-      it "creates only the new rss entries" do
-        create_rss_entries(5)
-        expect { subject }.to change(youtube_channel.rss_items, :count).by(10)
-      end
-    end
-
-    context "when no tweets exist" do
-      it "creates all the tweets" do
-        expect { subject }.to change(youtube_channel.rss_items, :count).by(15)
+      it "sets the link" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.link).to eq "url"
       end
     end
 
-    it "sets last loaded" do
+    context "when entry has link" do
+      before do
+        entries = [
+          Struct.new(:title, :link, :published_at, :description, :guid).new(
+            "title", "link", Time.zone.now, "description", "guid"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
+      end
+
+      it "sets the link" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.link).to eq "link"
+      end
+    end
+
+    context "when entry has published" do
+      before do
+        entries = [
+          Struct.new(:title, :link, :published, :description, :guid).new(
+            "title", "link", Time.zone.now, "description", "guid"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
+      end
+
+      it "sets the published at" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.published_at).to_not be_nil
+      end
+    end
+
+    context "when entry has published_at" do
+      before do
+        entries = [
+          Struct.new(:title, :link, :published_at, :description, :guid).new(
+            "title", "link", Time.zone.now, "description", "guid"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
+      end
+
+      it "sets the published at" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.published_at).to_not be_nil
+      end
+    end
+
+    context "when entry has guid" do
+      before do
+        entries = [
+          Struct.new(:title, :link, :published_at, :description, :guid).new(
+            "title", "link", Time.zone.now, "description", "guid"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
+      end
+
+      it "sets the guid" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.guid).to eq "guid"
+      end
+    end
+
+    context "when entry has entry id" do
+      before do
+        entries = [
+          Struct.new(:title, :link, :published_at, :description, :entry_id).new(
+            "title", "link", Time.zone.now, "description", "entry_id"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
+      end
+
+      it "sets the guid" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.guid).to eq "entry_id"
+      end
+    end
+
+    context "when entry has no title" do
+      before do
+        entries = [
+          Struct.new(:link, :published_at, :description, :entry_id).new(
+            "link", Time.zone.now, "description", "entry_id"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
+      end
+
+      it "sets uses the description" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.title).to eq "description"
+      end
+    end
+
+    context "when entry has no title, but a description with dots" do
+      before do
+        entries = [
+          Struct.new(:link, :published_at, :description, :entry_id).new(
+            "link", Time.zone.now, "A long description. That has dots.", "entry_id"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
+      end
+
+      it "sets uses the description before the first dot" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.title).to eq "A long description"
+      end
+    end
+
+    context "when entry has no title, but a description with \\n" do
+      before do
+        entries = [
+          Struct.new(:link, :published_at, :description, :entry_id).new(
+            "link", Time.zone.now, "A description \n with backslash n.", "entry_id"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
+      end
+
+      it "sets uses the description stripped" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.title).to eq "A description  with backslash n"
+      end
+    end
+
+    context "when entry has title" do
+      before do
+        entries = [
+          Struct.new(:title, :link, :published_at, :description, :entry_id).new(
+            "title", "link", Time.zone.now, "description", "entry_id"
+          )
+        ]
+        allow(subject).to receive(:entries_to_add).and_return(entries)
+      end
+
+      it "sets uses the title" do
+        expect { subject.call }.to change(RssItem, :count).by(1)
+        rss_item = RssItem.last
+        expect(rss_item.title).to eq "title"
+      end
+    end
+
+    it "updates last loaded" do
       travel_to(Time.zone.now) do
-        expect { subject }.to change { youtube_channel.last_loaded }.from(nil).to(Time.zone.now)
+        allow(subject).to receive(:entries_to_add).and_return([])
+        expect { subject.call }.to change { subscriptable.last_loaded }.from(nil).to(Time.zone.now)
       end
     end
   end

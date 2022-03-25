@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe Twitter::CreateRssItemsService, type: :service do
   let(:twitter_user) { create :twitter_user, :unloaded }
-
   let(:subject) { described_class.call(twitter_user: twitter_user) }
 
   let(:tweet_api_data) do
@@ -81,11 +80,11 @@ RSpec.describe Twitter::CreateRssItemsService, type: :service do
   end
 
   describe "#call" do
-    context "when api call fails" do
+    context "when Twitter API fails" do
       before do
         service = double
-        object = Twitter::Api::Client.new
-        object.errors.add(:base, "Some error")
+        object = User.new
+        object.errors.add(:base, "Some API error")
         errors = object.errors
         allow(service).to receive(:success?).and_return(false)
         allow(service).to receive(:errors).and_return(errors)
@@ -93,7 +92,7 @@ RSpec.describe Twitter::CreateRssItemsService, type: :service do
         allow(Twitter::Api::UsersService).to receive(:new).and_return(service)
       end
 
-      it_behaves_like "the service fails with error", "Some error"
+      it_behaves_like "the service fails with error", "Some API error"
     end
 
     context "when some tweets exist" do
@@ -106,12 +105,6 @@ RSpec.describe Twitter::CreateRssItemsService, type: :service do
     context "when no tweets exist" do
       it "creates all the tweets" do
         expect { subject }.to change(twitter_user.rss_items, :count).by(5)
-      end
-    end
-
-    it "sets last loaded" do
-      travel_to(Time.zone.now) do
-        expect { subject }.to change { twitter_user.last_loaded }.from(nil).to(Time.zone.now)
       end
     end
   end

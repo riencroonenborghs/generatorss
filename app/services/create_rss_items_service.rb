@@ -7,10 +7,7 @@ class CreateRssItemsService
   end
 
   def call
-    load_url_data
-    return unless success?
-
-    load_rss_entries
+    load_new_entries
     return unless success?
 
     create_new_rss_items
@@ -21,49 +18,71 @@ class CreateRssItemsService
 
   private
 
-  attr_reader :data, :entries, :subscriptable, :last_loaded, :tweets
+  attr_reader :subscriptable, :last_loaded, :new_entries
 
-  def load_url_data
-    loader = LoadUrlDataService.call(url: subscriptable.rss_url)
-    errors.merge!(loader.errors) and return unless loader.success?
-
-    @data = loader.data
-    errors.add(:base, "URL has no data") unless data
+  def load_new_entries
   end
 
-  def load_rss_entries
-    parsed_data = Feedjira.parse(data)
-    errors.add(:base, "could not parse RSS data") and return unless parsed_data
-    errors.add(:base, "no RSS entries found") and return unless parsed_data.entries
-
-    @entries = parsed_data.entries
+  def entries_to_add
   end
 
   def create_new_rss_items
-    new_guids = entries.map(&:entry_id)
-    existing_guids = subscriptable.rss_items.where(guid: new_guids).pluck(:guid)
-
-    new_guids -= existing_guids
-    new_entries = entries.select { |x| new_guids.include?(x.entry_id) }
-
     RssItem.transaction do
       subscriptable.rss_items.create!(
-        new_entries.map do |entry|
-          description = entry.content || entry.summary
-          title = entry.title || description.split(".")[0]
+        entries_to_add.map do |entry|
+          description = entry_description(entry)
+          title = entry_title(entry, description)
+
           hash = {
-            title: title.gsub("\n", ""),
-            link: entry.url,
-            published_at: entry.published,
+            title: title,
+            link: entry_link(entry),
+            published_at: entry_published_at(entry),
             description: description,
-            guid: entry.entry_id
+            guid: entry_guid(entry)
           }
           %i[media_title media_url media_type media_width media_height media_thumbnail_url media_thumbnail_width media_thumbnail_height enclosure_length enclosure_type enclosure_url itunes_duration itunes_episode_type itunes_author itunes_explicit itunes_image].each do |media|
             hash[media] = entry.send(media) if entry.respond_to?(media)
           end
+
           hash
         end
       )
     end
+  end
+
+  def entry_description(entry)
+    return entry.content if entry.respond_to?(:content)
+    return entry.summary if entry.respond_to?(:summary)
+    return entry.description if entry.respond_to?(:description)
+
+    nil
+  end
+
+  def entry_title(entry, description)
+    title = entry.respond_to?(:title) ? entry.title : description.split(".")[0]
+    return "No title." unless title
+
+    title.gsub("\n", "")
+  end
+
+  def entry_link(entry)
+    return entry.url if entry.respond_to?(:url)
+    return entry.link if entry.respond_to?(:link)
+
+    nil
+  end
+
+  def entry_published_at(entry)
+    return entry.published if entry.respond_to?(:published)
+    return entry.published_at if entry.respond_to?(:published_at)
+
+    nil
+  end
+
+  def entry_guid(entry)
+    return entry.guid if entry.respond_to?(:guid)
+    return entry.entry_id if entry.respond_to?(:entry_id)
+
+    nil
   end
 end

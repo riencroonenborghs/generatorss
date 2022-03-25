@@ -1,44 +1,22 @@
-class Discord::CreateRssItemsService
-  include AppService
-
+class Discord::CreateRssItemsService < CreateRssItemsService
   def initialize(discord_channel:)
-    @discord_channel = discord_channel
-    @last_loaded = discord_channel.last_loaded
-  end
-
-  def call
-    load_messages
-    return unless success?
-
-    create_new_rss_items
-    return unless success?
-
-    discord_channel.update(last_loaded: Time.zone.now)
+    super(subscriptable: discord_channel)
   end
 
   private
 
-  attr_reader :discord_channel, :last_loaded, :messages
-
-  def load_messages
-    service = Discord::Api::ChannelService.new(channel_id: discord_channel.channel_id)
-    @messages = service.messages
+  def load_new_entries
+    service = Discord::Api::ChannelService.new(channel_id: subscriptable.channel_id)
+    @new_entries = service.messages.map(&:as_rss_item)
     errors.merge!(service.errors) and return unless service.success?
   end
 
-  def create_new_rss_items
-    scope = discord_channel.rss_items
-    scope = scope.where("published_at > ?", last_loaded) if last_loaded
+  def entries_to_add
+    scope = subscriptable.rss_items
     existing_guids = scope.select(:guid).pluck(:guid)
 
-    new_ids = messages.map(&:id)
+    new_ids = new_entries.map(&:guid)
     new_ids -= existing_guids
-    new_messages = messages.select { |x| new_ids.include?(x.id) }
-
-    RssItem.transaction do
-      discord_channel.rss_items.create!(
-        new_messages.map(&:as_rss_item)
-      )
-    end
+    new_entries.select { |x| new_ids.include?(x.guid) }
   end
 end

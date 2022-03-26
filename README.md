@@ -1,24 +1,46 @@
-# README
+# GeneratoRSS
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## What is it?
 
-Things you may want to cover:
+GeneratoRSS generates [RSS](https://en.wikipedia.org/wiki/RSS) feeds from:
+* Twitter users
+* Youtube channels
+* Discord channels
+* Websites such as tumblr, blogger and medium
+* Handful of other websites
 
-* Ruby version
+## Features
 
-* System dependencies
+One unique RSS feed URL per Twitter user, Youtube channel, Discord channel, website, ...
 
-* Configuration
+One unique combined RSS feed URL with everything in it.
 
-* Database creation
+Unlimited Filtering.
 
-* Database initialization
+30 day data retention (see (`Subscription::RETENTION`).
 
-* How to run the test suite
+15 minute refresh (see `config/schedule.yml`).
 
-* Services (job queues, cache servers, search engines, etc.)
+## Tech
 
-* Deployment instructions
+Ruby on Rails 7
 
-* ...
+PostgreSQL
+
+Sidekiq
+
+## Install
+
+Clone this repo.
+
+Create a `.env` in the root path with:
+* `TWITTER_BEARER_TOKEN`
+* `DISCORD_AUTHORIZATION`
+* development, test and production database keys
+  See `config/database.yml` for the exact key names.
+  
+Open up a rails console and create a user, see `db/seed.rb` for an example.
+
+Start the server, log in and start adding your things.
+
+Start adding the unique RSS feed URLS to your favourite RSS reader.

@@ -8,10 +8,10 @@
   .mt-4
     = form_with(scope: :twitter, url: user_subscriptions_path) do |f|
       .row
-        .col-12.col-lg-5
-          = f.label :url_or_handle, "Twitter URL or handle", class: "form-label"
+        .col-12.col-lg-7
+          -# = f.label :url_or_handle, "Twitter URL or handle", class: "form-label"
           = f.text_field :url_or_handle, autofocus: true, placeholder: "e.g. http://twitter.com/twitter or @twitter", class: "form-control", value: @url_or_handle
-        .col-12.col-lg-3.mt-4.pt-2
+        .col-12.col-lg-3
           %button.btn.btn-outline-primary(type="submit")
             = fa_brands "twitter", options: { class: "twitter" }, size: 1
             Add Twitter User
@@ -24,10 +24,10 @@
   .mt-4
     = form_with(scope: :youtube_channel, url: user_subscriptions_path) do |f|
       .row
-        .col-12.col-lg-5
-          = f.label :url, "Youtube Channel URL", class: "form-label"
+        .col-12.col-lg-7
+          -# = f.label :url, "Youtube Channel URL", class: "form-label"
           = f.text_field :url, autofocus: true, placeholder: "e.g. https://www.youtube.com/c/OrdinarySausage", class: "form-control", value: @url
-        .col-12.col-lg-3.mt-4.pt-2
+        .col-12.col-lg-3
           %button.btn.btn-outline-primary(type="submit")
             = fa_brands "youtube", options: { class: "youtube" }, size: 1
             Add Youtube Channel
@@ -39,14 +39,29 @@
   .mt-4
     = form_with(scope: :website, url: user_subscriptions_path) do |f|
       .row
-        .col-12.col-lg-5
-          = f.label :url, "Website URL", class: "form-label"
+        .col-12.col-lg-7
+          -# = f.label :url, "Website URL", class: "form-label"
           = f.text_field :url, autofocus: true, placeholder: "e.g. https://badjokesbyjeff.tumblr.com", class: "form-control", value: @url
-        .col-12.col-lg-3.mt-4.pt-2
+        .col-12.col-lg-3
           %button.btn.btn-outline-primary(type="submit")
             = fa_solid "link", options: { class: "website" }, size: 1
             Add Website
 
   - if @service.is_a?(Website::CreateSubscriptionService) && @service&.failure?
+    .text-danger
+      = @service.errors.full_messages.join(",")
+
+  .mt-4
+    = form_with(scope: :discord_channel, url: user_subscriptions_path) do |f|
+      .row
+        .col-12.col-lg-7
+          -# = f.label :url, "Discord URL", class: "form-label"
+          = f.text_field :url, autofocus: true, placeholder: "e.g. https://discord.com/channels/904325308398833694/945298231716368394", class: "form-control", value: @url
+        .col-12.col-lg-3
+          %button.btn.btn-outline-primary(type="submit")
+            = fa_brands "discord", options: { class: "discord" }, size: 1
+            Add Discord Channel
+
+  - if @service.is_a?(Discord::CreateSubscriptionService) && @service&.failure?
     .text-danger
       = @service.errors.full_messages.join(",")

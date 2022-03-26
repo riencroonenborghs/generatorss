@@ -11,6 +11,8 @@ class User::SubscriptionsController < User::BaseController
       create_youtube_channel_subscription
     elsif params.key?(:website)
       create_website_subscription
+    elsif params.key?(:discord_channel)
+      create_discord_subscription
     end
 
     respond_to do |format|
@@ -54,6 +56,15 @@ class User::SubscriptionsController < User::BaseController
     @service = Website::CreateSubscriptionService.call(
       user: current_user,
       url: @url
+    )
+  end
+
+  def create_discord_subscription
+    @url = params.require(:discord_channel).permit(:url)[:url]
+    channel_id = @url.split("/").last
+    @service = Discord::CreateSubscriptionService.call(
+      user: current_user,
+      channel_id: channel_id
     )
   end
 end

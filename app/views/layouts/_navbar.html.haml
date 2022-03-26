@@ -10,7 +10,7 @@
       - if user_signed_in?
         %ul.navbar-nav.me-auto.mb-2.mb-lg-0.ms-4
           %li.nav-item
-            = link_to "Subscriptions", user_subscriptions_path, class: "nav-link #{'active' if active_page?(user_subscriptions_path)}"
+            = link_to "Subscriptions", user_subscriptions_path, class: "nav-link #{'active' if current_page?(root_path) || active_page?(user_subscriptions_path)}"
           %li.nav-item
             = link_to "Combined RSS Feed", combined_rss_feed_path(current_user.uuid, format: :rss), class: "nav-link", target: "_blank"
           %li.nav-item

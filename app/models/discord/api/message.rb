@@ -21,12 +21,14 @@ class Discord::Api::Message < Struct.new(:id, :content, :embeds, :timestamp, key
   end
 
   def as_rss_item
-    link = embeds.any? ? embeds.first.url : "http://foo.bar.baz"
+    link = embeds.any? ? embeds.last.url : "http://foo.bar.baz"
+    title = content.split(/[.\n]/)[0]
 
     RssItem.new(
-      title: content,
+      title: title,
       link: link,
       published_at: timestamp,
+      description: content.split("\n").map { |x| "<p>#{x}</p>" }.join,
       guid: id
     )
   end

@@ -1,5 +1,5 @@
 sync_active_subscriptions_job:
-  cron: "*/15 * * * *"
+  cron: "*/30 * * * *"
   class: "SyncSubscriptionsJob"
   queue: generatorss
 

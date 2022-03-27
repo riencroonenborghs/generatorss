@@ -6,6 +6,7 @@ GeneratoRSS generates [RSS](https://en.wikipedia.org/wiki/RSS) feeds from:
 * Twitter users
 * Youtube channels
 * Discord channels
+* iTunes podcasts
 * Websites such as tumblr, blogger and medium
 * Handful of other websites
 
@@ -19,7 +20,7 @@ Unlimited Filtering.
 
 30 day data retention (see (`Subscription::RETENTION`).
 
-15 minute refresh (see `config/schedule.yml`).
+30 minute refresh (see `config/schedule.yml`).
 
 ## Tech
 

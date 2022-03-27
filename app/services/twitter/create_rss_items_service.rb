@@ -22,11 +22,8 @@ class Twitter::CreateRssItemsService < CreateRssItemsService
   end
 
   def entries_to_add
-    scope = subscriptable.rss_items
-    scope = scope.where("published_at > ?", last_loaded) if last_loaded
-    existing_guids = scope.select(:guid).pluck(:guid)
-
     new_guids = new_entries.map(&:guid)
+    existing_guids = subscriptable.rss_items.where(guid: new_guids).distinct.pluck(:guid)
     new_guids -= existing_guids
     new_entries.select { |x| new_guids.include?(x.guid) }
   end

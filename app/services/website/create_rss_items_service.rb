@@ -17,8 +17,7 @@ class Website::CreateRssItemsService < CreateRssItemsService
 
   def entries_to_add
     new_guids = new_entries.map(&:entry_id)
-    existing_guids = subscriptable.rss_items.where(guid: new_guids).pluck(:guid)
-
+    existing_guids = subscriptable.rss_items.where(guid: new_guids).distinct.pluck(:guid)
     new_guids -= existing_guids
     new_entries.select { |x| new_guids.include?(x.entry_id) }
   end

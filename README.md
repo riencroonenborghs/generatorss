@@ -12,9 +12,9 @@ GeneratoRSS generates [RSS](https://en.wikipedia.org/wiki/RSS) feeds from:
 
 ## Features
 
-One unique RSS feed URL per Twitter user, Youtube channel, Discord channel, website, ...
+One unique RSS feed URL (with 25 items) per Twitter user, Youtube channel, Discord channel, website, ...
 
-One unique combined RSS feed URL with everything in it.
+One unique combined RSS feed URL (with 100 items) with everything in it.
 
 Unlimited Filtering.
 

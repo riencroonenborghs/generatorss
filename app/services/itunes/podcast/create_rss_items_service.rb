@@ -16,11 +16,10 @@ class Itunes::Podcast::CreateRssItemsService < CreateRssItemsService
   end
 
   def entries_to_add
-    new_guids = new_entries.map(&:entry_id)
-    existing_guids = subscriptable.rss_items.where(guid: new_guids).pluck(:guid)
-
-    new_guids -= existing_guids
-    new_entries.select { |x| new_guids.include?(x.entry_id) }
+    new_entry_ids = new_entries.map(&:entry_id)
+    existing_guids = subscriptable.rss_items.where(guid: new_entry_ids).distinct.pluck(:guid)
+    new_entry_ids -= existing_guids
+    new_entries.select { |x| new_entry_ids.include?(x.entry_id) }
   end
 
   def load_url_data

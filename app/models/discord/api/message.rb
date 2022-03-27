@@ -22,7 +22,7 @@ class Discord::Api::Message < Struct.new(:id, :content, :embeds, :timestamp, key
 
   def as_rss_item
     link = embeds.any? ? embeds.last.url : "http://foo.bar.baz"
-    title = content.split(/[.\n]/)[0]
+    title = ActionController::Base.helpers.strip_tags content.split(/[\n]/)[0]
 
     RssItem.new(
       title: title,

@@ -12,11 +12,9 @@ class Discord::CreateRssItemsService < CreateRssItemsService
   end
 
   def entries_to_add
-    scope = subscriptable.rss_items
-    existing_guids = scope.select(:guid).pluck(:guid)
-
-    new_ids = new_entries.map(&:guid)
-    new_ids -= existing_guids
-    new_entries.select { |x| new_ids.include?(x.guid) }
+    new_guids = new_entries.map(&:guid)
+    existing_guids = subscriptable.rss_items.where(guid: new_guids).distinct.pluck(:guid)
+    new_guids -= existing_guids
+    new_entries.select { |x| new_guids.include?(x.guid) }
   end
 end

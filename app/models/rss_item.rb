@@ -5,6 +5,7 @@ class RssItem < ApplicationRecord
   belongs_to :itemable, polymorphic: true
 
   validates :title, :link, :published_at, :guid, presence: true
+  validates :guid, uniqueness: { scope: :itemable_type }
 
   def media?
     media_url.present?

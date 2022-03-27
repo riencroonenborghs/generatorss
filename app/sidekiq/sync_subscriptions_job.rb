@@ -11,8 +11,10 @@ class SyncSubscriptionsJob
         SyncYoutubeChannelJob.perform_async(id)
       when "Website"
         SyncWebsiteJob.perform_async(id)
-      else
+      when "DiscordChannel"
         SyncDiscordChannelJob.perform_async(id)
+      else
+        SyncItunesPodcastJob.perform_async(id)
       end
     end
   end

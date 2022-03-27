@@ -27,36 +27,35 @@ class CreateRssItemsService
   end
 
   def create_new_rss_items
-    RssItem.transaction do
-      subscriptable.rss_items.create!(
-        entries_to_add.map do |entry|
-          description = entry_description(entry)
-          title = entry_title(entry, description)
+    subscriptable.transaction do
+      hash = entries_to_add.map do |entry|
+        description = entry_description(entry)
+        title = entry_title(entry, description)
 
-          hash = {
-            title: title,
-            link: entry_link(entry),
-            published_at: entry_published_at(entry),
-            description: description,
-            guid: entry_guid(entry)
-          }
-          %i[media_title media_url media_type media_width media_height media_thumbnail_url media_thumbnail_width media_thumbnail_height enclosure_length enclosure_type enclosure_url itunes_duration itunes_episode_type itunes_author itunes_explicit itunes_image itunes_title
-          itunes_summary].each do |media|
-            hash[media] = entry.send(media) if entry.respond_to?(media)
-          end
+        hash = {
+          title: title,
+          link: entry_link(entry),
+          published_at: entry_published_at(entry),
+          description: description,
+          guid: entry_guid(entry)
+        }
+        %i[media_title media_url media_type media_width media_height media_thumbnail_url media_thumbnail_width media_thumbnail_height enclosure_length enclosure_type enclosure_url itunes_duration itunes_episode_type itunes_author itunes_explicit itunes_image itunes_title
+        itunes_summary].each do |media|
+          hash[media] = entry.send(media) if entry.respond_to?(media)
+        end   
 
-          hash
-        end
-      )
+        hash
+      end
+
+      subscriptable.rss_items.create!(hash)
     end
   end
 
   def entry_description(entry)
-    return entry.content if entry.respond_to?(:content)
-    return entry.summary if entry.respond_to?(:summary)
-    return entry.description if entry.respond_to?(:description)
-
-    nil
+    content = entry.content if entry.respond_to?(:content)
+    summary = entry.summary if entry.respond_to?(:summary)
+    description = entry.description if entry.respond_to?(:description)
+    content || summary || description
   end
 
   def entry_title(entry, description)

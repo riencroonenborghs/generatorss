@@ -23,6 +23,11 @@ class LoadRssItemsService
     build_channel
   end
 
+  def rss_items_tag
+    @rss_items_tag ||= @subscriptable.class == YoutubeChannel ? :entry : :item
+  end
+    
+
   private
 
   attr_reader :user, :subscriptable, :rss_items
@@ -38,9 +43,13 @@ class LoadRssItemsService
     @rss_items = engine.scope
   end
 
+  def channel_title
+    subscriptable.name
+  end
+
   def build_channel
     @channel = Rss::Channel.new(
-      title: subscriptable.name,
+      title: channel_title,
       link: subscriptable.url,
       last_build_date: Date.current,
       ttl: Subscription::TTL,

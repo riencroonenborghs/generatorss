@@ -8,7 +8,7 @@ class LoadRssItemsService
     @user = user
   end
 
-  def additional_header
+  def rss_header
     {}
   end
 

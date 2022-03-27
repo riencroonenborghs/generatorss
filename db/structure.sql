@@ -168,13 +168,13 @@ CREATE TABLE public.rss_items (
     enclosure_length integer,
     enclosure_type character varying,
     enclosure_url character varying,
+    itunes_duration character varying,
     itunes_episode_type character varying,
     itunes_author character varying,
     itunes_explicit boolean,
     itunes_image character varying,
     itunes_title character varying,
-    itunes_summary character varying,
-    itunes_duration character varying
+    itunes_summary character varying
 );
 
 

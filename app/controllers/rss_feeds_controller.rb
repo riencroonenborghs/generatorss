@@ -14,7 +14,7 @@ class RssFeedsController < ApplicationController
     @service = case @subscription.subscriptable
               when TwitterUser
                 Twitter::LoadRssItemsService.call(
-                  twitter_user: @subscription.subscriptable,
+                  subscriptable: @subscription.subscriptable,
                   user: @subscription.user
                 )
               when YoutubeChannel

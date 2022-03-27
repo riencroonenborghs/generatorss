@@ -13,6 +13,8 @@ class User::SubscriptionsController < User::BaseController
       create_website_subscription
     elsif params.key?(:discord_channel)
       create_discord_subscription
+    elsif params.key?(:itunes_podcast)
+      create_itunes_podcast_subscription
     end
 
     respond_to do |format|
@@ -65,6 +67,14 @@ class User::SubscriptionsController < User::BaseController
     @service = Discord::CreateSubscriptionService.call(
       user: current_user,
       channel_id: channel_id
+    )
+  end
+
+  def create_itunes_podcast_subscription
+    @url = params.require(:itunes_podcast).permit(:url)[:url]
+    @service = Itunes::Podcast::CreateSubscriptionService.call(
+      user: current_user,
+      url: @url
     )
   end
 end

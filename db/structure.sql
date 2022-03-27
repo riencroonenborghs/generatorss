@@ -8,6 +8,20 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -90,6 +104,42 @@ CREATE SEQUENCE public.filters_id_seq
 --
 
 ALTER SEQUENCE public.filters_id_seq OWNED BY public.filters.id;
+
+
+--
+-- Name: itunes_podcasts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.itunes_podcasts (
+    id bigint NOT NULL,
+    last_loaded timestamp(6) without time zone,
+    podcast_id character varying NOT NULL,
+    url character varying NOT NULL,
+    rss_url character varying NOT NULL,
+    name character varying NOT NULL,
+    image_url character varying,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL
+);
+
+
+--
+-- Name: itunes_podcasts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.itunes_podcasts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: itunes_podcasts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.itunes_podcasts_id_seq OWNED BY public.itunes_podcasts.id;
 
 
 --
@@ -432,6 +482,13 @@ ALTER TABLE ONLY public.filters ALTER COLUMN id SET DEFAULT nextval('public.filt
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY public.itunes_podcasts ALTER COLUMN id SET DEFAULT nextval('public.itunes_podcasts_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY public.rss_items ALTER COLUMN id SET DEFAULT nextval('public.rss_items_id_seq'::regclass);
 
 
@@ -506,6 +563,14 @@ ALTER TABLE ONLY public.discord_channels
 
 ALTER TABLE ONLY public.filters
     ADD CONSTRAINT filters_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: itunes_podcasts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.itunes_podcasts
+    ADD CONSTRAINT itunes_podcasts_pkey PRIMARY KEY (id);
 
 
 --
@@ -606,6 +671,13 @@ CREATE INDEX index_filters_on_user_id ON public.filters USING btree (user_id);
 --
 
 CREATE INDEX index_filters_on_user_id_and_value ON public.filters USING btree (user_id, value);
+
+
+--
+-- Name: index_itunes_podcasts_on_podcast_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_itunes_podcasts_on_podcast_id ON public.itunes_podcasts USING btree (podcast_id);
 
 
 --
@@ -854,6 +926,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220317080236'),
 ('20220317231447'),
 ('20220319183509'),
-('20220324075856');
+('20220324075856'),
+('20220326225949');
 
 

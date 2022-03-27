@@ -32,6 +32,11 @@ class RssFeedsController < ApplicationController
                   subscriptable: @subscription.subscriptable,
                   user: @subscription.user
                 )
+              when ItunesPodcast
+                Itunes::Podcast::LoadRssItemsService.call(
+                  subscriptable: @subscription.subscriptable,
+                  user: @subscription.user
+                )
               else
                 redirect_to root_path and return
               end

@@ -1,5 +1,6 @@
 class RssItem < ApplicationRecord
   MAX_ITEMS_IN_FEED = 25
+  MAX_ITEMS_IN_COMBINED_FEED = 100
 
   belongs_to :itemable, polymorphic: true
 

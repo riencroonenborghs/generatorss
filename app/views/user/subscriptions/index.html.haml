@@ -23,6 +23,9 @@
         - elsif subscription.subscriptable.is_a?(DiscordChannel)
           - discord_channel = subscription.subscriptable
           = render "discord_channel", discord_channel: discord_channel, subscription: subscription
+        - elsif subscription.subscriptable.is_a?(ItunesPodcast)
+          - itunes_podcast = subscription.subscriptable
+          = render "itunes_podcast", itunes_podcast: itunes_podcast, subscription: subscription
 
 
     - if @subscription_count > 10

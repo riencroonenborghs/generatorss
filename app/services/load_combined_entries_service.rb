@@ -14,7 +14,7 @@ class LoadCombinedEntriesService
 
     @rss_items = @rss_items
                  .order(published_at: :desc)
-                 .limit(RssItem::MAX_ITEMS_IN_FEED)
+                 .limit(RssItem::MAX_ITEMS_IN_COMBINED_FEED)
 
     build_channel
   end
@@ -40,8 +40,24 @@ class LoadCombinedEntriesService
                       itemable_type: "Website",
                       itemable_id: itemables_for("Website")
                     )
+    
+    discord_channel_scope = scope
+                            .where(
+                              itemable_type: "DiscordChannel",
+                              itemable_id: itemables_for("DiscordChannel")
+                            )
 
-    @rss_items = twitter_user_scope.or(youtube_channel_scope).or(website_scope)
+    itunes_podcast_scope = scope
+                           .where(
+                             itemable_type: "ItunesPodcast",
+                             itemable_id: itemables_for("ItunesPodcast")
+                           )
+
+    @rss_items = twitter_user_scope
+                 .or(youtube_channel_scope)
+                 .or(website_scope)
+                 .or(discord_channel_scope)
+                 .or(itunes_podcast_scope)
   end
 
   def itemables_for(itemable_type)

@@ -1,0 +1,16 @@
+%li.list-group-item
+  .d-flex.flex-row.justify-content-between
+    .d-flex.flex-row
+      - if itunes_podcast.image_url
+        = image_tag itunes_podcast.image_url, class: "rounded", style: "width: 75px;"
+      .d-flex.flex-column(class="#{'ps-4' if itunes_podcast.image_url}")
+        = fa_solid "podcast", options: { class: "podcast" }, size: 1
+        %h3
+          = link_to itunes_podcast.name, itunes_podcast.url, target: "_blank"
+    .d-flex.flex-column.my-twitter-feeds--manage.align-items-end
+      = button_to user_subscription_path(subscription), method: :delete, class: "text-danger btn" do
+        = fa_solid "trash", size: 1
+        Remove
+      = link_to rss_feed_path(subscription.uuid, format: :rss), target: "_blank", class: "rss" do
+        = fa_solid "rss", size: 1
+        RSS Feed

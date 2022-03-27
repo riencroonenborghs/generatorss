@@ -55,7 +55,6 @@
     = form_with(scope: :discord_channel, url: user_subscriptions_path) do |f|
       .row
         .col-12.col-lg-7
-          -# = f.label :url, "Discord URL", class: "form-label"
           = f.text_field :url, autofocus: true, placeholder: "e.g. https://discord.com/channels/904325308398833694/945298231716368394", class: "form-control", value: @url
         .col-12.col-lg-3
           %button.btn.btn-outline-primary(type="submit")
@@ -63,5 +62,19 @@
             Add Discord Channel
 
   - if @service.is_a?(Discord::CreateSubscriptionService) && @service&.failure?
+    .text-danger
+      = @service.errors.full_messages.join(",")
+
+  .mt-4
+    = form_with(scope: :itunes_podcast, url: user_subscriptions_path) do |f|
+      .row
+        .col-12.col-lg-7
+          = f.text_field :url, autofocus: true, placeholder: "e.g. https://podcasts.apple.com/us/podcast/unspooled/id1381507437", class: "form-control", value: @url
+        .col-12.col-lg-3
+          %button.btn.btn-outline-primary(type="submit")
+            = fa_solid "podcast", options: { class: "podcast" }, size: 1
+            Add iTunes Podcast
+
+  - if @service.is_a?(Itunes::Podcast::CreateSubscriptionService) && @service&.failure?
     .text-danger
       = @service.errors.full_messages.join(",")

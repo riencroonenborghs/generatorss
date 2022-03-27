@@ -168,11 +168,13 @@ CREATE TABLE public.rss_items (
     enclosure_length integer,
     enclosure_type character varying,
     enclosure_url character varying,
-    itunes_duration integer,
     itunes_episode_type character varying,
     itunes_author character varying,
     itunes_explicit boolean,
-    itunes_image character varying
+    itunes_image character varying,
+    itunes_title character varying,
+    itunes_summary character varying,
+    itunes_duration character varying
 );
 
 
@@ -927,6 +929,8 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20220317231447'),
 ('20220319183509'),
 ('20220324075856'),
-('20220326225949');
+('20220326225949'),
+('20220327003903'),
+('20220327004906');
 
 

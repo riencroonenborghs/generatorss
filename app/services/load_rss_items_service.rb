@@ -8,6 +8,10 @@ class LoadRssItemsService
     @user = user
   end
 
+  def additional_header
+    {}
+  end
+
   def call
     create_scope
     filter_scope

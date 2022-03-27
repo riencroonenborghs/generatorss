@@ -14,9 +14,12 @@ class RssItem < ApplicationRecord
     enclosure_url.present?
   end
 
-  def itunes?
-    return false unless itunes_duration
+  def youtube?
+    itemable_type == "YoutubeChannel"
+    # xmlns:yt=\"http://www.youtube.com/xml/schemas/2015\"
+  end
 
-    !itunes_duration.zero?
+  def itunes?
+    itemable_type == "ItunesPodcast"
   end
 end

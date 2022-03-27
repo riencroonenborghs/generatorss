@@ -11,7 +11,7 @@ class RssFeedsController < ApplicationController
                                                 .pluck(:id)
                                                 .include?(@subscription.id)
 
-    service = case @subscription.subscriptable
+    @service = case @subscription.subscriptable
               when TwitterUser
                 Twitter::LoadRssItemsService.call(
                   twitter_user: @subscription.subscriptable,
@@ -40,7 +40,7 @@ class RssFeedsController < ApplicationController
               else
                 redirect_to root_path and return
               end
-    @channel = service.channel
+    @channel = @service.channel
 
     respond_to do |format|
       format.rss

@@ -1,5 +1,5 @@
 xml.instruct!
-xml.rss :version => "2.0", "xmlns:atom" => "http://www.w3.org/2005/Atom" do
+xml.rss({:version => "2.0", "xmlns:atom" => "http://www.w3.org/2005/Atom"}.update(@service.rss_header)) do
   xml.channel do
     xml.title @channel.title
     xml.link @channel.link
@@ -34,6 +34,8 @@ xml.rss :version => "2.0", "xmlns:atom" => "http://www.w3.org/2005/Atom" do
           xml.itunesAuthor item.itunes_author
           xml.itunesExplicit item.itunes_explicit
           xml.itunesImage item.itunes_image
+          xml.itunesTitle item.itunes_title
+          xml.itunesSummary item.itunes_summary
         end
       end
     end

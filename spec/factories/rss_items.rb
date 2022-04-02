@@ -22,6 +22,6 @@ FactoryBot.define do
     media_thumbnail_url { "MyString" }
     media_thumbnail_width { 1 }
     media_thumbnail_height { 1 }
-    guid { "MyString" }
+    guid { SecureRandom.uuid }
   end
 end

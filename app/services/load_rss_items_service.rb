@@ -8,10 +8,6 @@ class LoadRssItemsService
     @user = user
   end
 
-  def rss_header
-    {}
-  end
-
   def call
     create_scope
     filter_scope

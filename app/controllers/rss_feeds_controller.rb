@@ -12,38 +12,49 @@ class RssFeedsController < ApplicationController
                                                 .include?(@subscription.id)
 
     @service = case @subscription.subscriptable
-              when TwitterUser
-                Twitter::LoadRssItemsService.call(
-                  subscriptable: @subscription.subscriptable,
-                  user: @subscription.user
-                )
-              when YoutubeChannel
-                YoutubeChannel::LoadRssItemsService.call(
-                  subscriptable: @subscription.subscriptable,
-                  user: @subscription.user
-                )
-              when Website
-                Website::LoadRssItemsService.call(
-                  subscriptable: @subscription.subscriptable,
-                  user: @subscription.user
-                )
-              when DiscordChannel
-                Discord::LoadRssItemsService.call(
-                  subscriptable: @subscription.subscriptable,
-                  user: @subscription.user
-                )
-              when ItunesPodcast
-                Itunes::Podcast::LoadRssItemsService.call(
-                  subscriptable: @subscription.subscriptable,
-                  user: @subscription.user
-                )
-              else
-                redirect_to root_path and return
-              end
+      when TwitterUser
+        Twitter::LoadRssItemsService.call(
+          subscriptable: @subscription.subscriptable,
+          user: @subscription.user
+        )
+      when YoutubeChannel
+        YoutubeChannel::LoadRssItemsService.call(
+          subscriptable: @subscription.subscriptable,
+          user: @subscription.user
+        )
+      when Website
+        Website::LoadRssItemsService.call(
+          subscriptable: @subscription.subscriptable,
+          user: @subscription.user
+        )
+      when DiscordChannel
+        Discord::LoadRssItemsService.call(
+          subscriptable: @subscription.subscriptable,
+          user: @subscription.user
+        )
+      when ItunesPodcast
+        Itunes::Podcast::LoadRssItemsService.call(
+          subscriptable: @subscription.subscriptable,
+          user: @subscription.user
+        )
+      else
+        redirect_to root_path and return
+      end
     @channel = @service.channel
 
     respond_to do |format|
-      format.rss
+      case @subscription.subscriptable
+      when TwitterUser
+        format.rss { render "twitter_user" }
+      when YoutubeChannel
+        format.rss { render "youtube_channel" }
+      when Website
+        format.rss { render "website" }
+      when DiscordChannel
+        format.rss { render "discord_channel" }
+      when ItunesPodcast
+        format.rss { render "itunes_podcast" }
+      end
     end
   end
 

@@ -23,4 +23,8 @@ class RssItem < ApplicationRecord
   def itunes?
     itemable_type == "ItunesPodcast"
   end
+
+  def youtube_video_id
+    @youtube_video_id ||= guid.gsub("yt:video:", "")
+  end
 end

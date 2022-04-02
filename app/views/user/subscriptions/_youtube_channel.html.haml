@@ -6,13 +6,4 @@
         = fa_brands "youtube", options: { class: "youtube" }, size: 1
         %h3
           = link_to youtube_channel.name, youtube_channel.url, target: "_blank"
-    .d-flex.flex-column.my-twitter-feeds--manage.align-items-end
-      = button_to user_subscription_path(subscription), method: :delete, class: "text-danger btn" do
-        = fa_solid "trash", size: 1
-        Remove
-      -#= link_to rss_feed_path(subscription.uuid, format: :rss), target: "_blank", class: "rss" do
-        = fa_solid "rss", size: 1
-        RSS Feed
-      = link_to rss_feed_path(subscription.uuid, format: :rss), target: "_blank", class: "rss" do
-        = fa_solid "rss", size: 1
-        RSS Feed
+    = render "buttons", subscription: subscription

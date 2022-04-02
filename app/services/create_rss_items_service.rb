@@ -37,6 +37,7 @@ class CreateRssItemsService
           description: description,
           guid: entry_guid(entry)
         }
+
         %i[
           media_title media_url media_type media_width media_height media_thumbnail_url
           media_thumbnail_width media_thumbnail_height enclosure_length enclosure_type enclosure_url
@@ -61,10 +62,14 @@ class CreateRssItemsService
   end
 
   def entry_title(entry, description)
-    title = entry.respond_to?(:title) ? entry.title : description.split(".")[0]
-    return "No title." unless title
+    title = entry.title if entry.respond_to?(:title)
+    return title.gsub("\n", "") if title.present?
 
-    title.gsub("\n", "")
+    stripped_description = ActionController::Base.helpers.strip_tags(description)
+    stripped_description = stripped_description.split(".")[0] if stripped_description
+    stripped_description = stripped_description.gsub("\n", "") if stripped_description
+
+    stripped_description || "No title."
   end
 
   def entry_link(entry)

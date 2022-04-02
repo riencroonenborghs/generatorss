@@ -34,7 +34,7 @@ RSpec.describe Discord::Api::ChannelService, type: :service do
     end
 
     context "when the client succeeds" do
-      let(:data) { { } }
+      let(:data) { {} }
 
       before do
         expect(client).to receive(:get).with("/channels/#{channel_id}").and_return(data)

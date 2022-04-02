@@ -66,12 +66,16 @@ RSpec.describe CreateSubscriptionService, type: :service do
 
       # stub the subscriptable_class
       # so sidekiq doesn't try to sync
+
+      # rubocop:disable Lint/ConstantDefinitionInBlock
+      # rubocop:disable Lint/EmptyClass
       class Foo
       end
+      # rubocop:enable Lint/ConstantDefinitionInBlock
+      # rubocop:enable Lint/EmptyClass
 
-      class SyncFooJob
-        def self.perform_async(id)
-        end
+      class SyncFooJob # rubocop:disable Lint/ConstantDefinitionInBlock
+        def self.perform_async(id); end
       end
 
       it "saves the subscription" do

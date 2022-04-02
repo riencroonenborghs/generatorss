@@ -1,4 +1,6 @@
 class RssFeedsController < ApplicationController
+  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def show
     @subscription = Subscription.includes(:user)
                                 .includes(subscriptable: %i[twitter_user youtube_channel website discord_channel])
@@ -12,34 +14,34 @@ class RssFeedsController < ApplicationController
                                                 .include?(@subscription.id)
 
     @service = case @subscription.subscriptable
-      when TwitterUser
-        Twitter::LoadRssItemsService.call(
-          subscriptable: @subscription.subscriptable,
-          user: @subscription.user
-        )
-      when YoutubeChannel
-        YoutubeChannel::LoadRssItemsService.call(
-          subscriptable: @subscription.subscriptable,
-          user: @subscription.user
-        )
-      when Website
-        Website::LoadRssItemsService.call(
-          subscriptable: @subscription.subscriptable,
-          user: @subscription.user
-        )
-      when DiscordChannel
-        Discord::LoadRssItemsService.call(
-          subscriptable: @subscription.subscriptable,
-          user: @subscription.user
-        )
-      when ItunesPodcast
-        Itunes::Podcast::LoadRssItemsService.call(
-          subscriptable: @subscription.subscriptable,
-          user: @subscription.user
-        )
-      else
-        redirect_to root_path and return
-      end
+               when TwitterUser
+                 Twitter::LoadRssItemsService.call(
+                   subscriptable: @subscription.subscriptable,
+                   user: @subscription.user
+                 )
+               when YoutubeChannel
+                 YoutubeChannel::LoadRssItemsService.call(
+                   subscriptable: @subscription.subscriptable,
+                   user: @subscription.user
+                 )
+               when Website
+                 Website::LoadRssItemsService.call(
+                   subscriptable: @subscription.subscriptable,
+                   user: @subscription.user
+                 )
+               when DiscordChannel
+                 Discord::LoadRssItemsService.call(
+                   subscriptable: @subscription.subscriptable,
+                   user: @subscription.user
+                 )
+               when ItunesPodcast
+                 Itunes::Podcast::LoadRssItemsService.call(
+                   subscriptable: @subscription.subscriptable,
+                   user: @subscription.user
+                 )
+               else
+                 redirect_to root_path and return
+               end
     @channel = @service.channel
 
     respond_to do |format|
@@ -57,6 +59,8 @@ class RssFeedsController < ApplicationController
       end
     end
   end
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def combined
     @user = User.includes(subscriptions: { subscriptable: %i[twitter_user youtube_channel discord_channel] }).find_by(uuid: params[:uuid])

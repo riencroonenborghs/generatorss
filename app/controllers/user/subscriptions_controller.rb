@@ -4,7 +4,7 @@ class User::SubscriptionsController < User::BaseController
     @subscription_count = @subscriptions.total_count
   end
 
-  def create
+  def create # rubocop:disable Metrics/PerceivedComplexity
     if params.key?(:twitter)
       create_twitter_subscription
     elsif params.key?(:youtube_channel)

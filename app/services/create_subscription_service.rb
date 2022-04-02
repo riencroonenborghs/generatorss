@@ -23,7 +23,7 @@ class CreateSubscriptionService
       @subscription = user.subscriptions.build(subscriptable: subscriptable)
 
       if subscription.save
-        job_class = "Sync#{subscriptable_class.to_s}Job".constantize
+        job_class = "Sync#{subscriptable_class}Job".constantize
         job_class.perform_async(subscriptable.id)
       else
         errors.merge!(subscription.errors)
@@ -35,8 +35,7 @@ class CreateSubscriptionService
 
   attr_reader :user, :input, :subscriptable_class, :subscriptable
 
-  def process_input
-  end
+  def process_input; end
 
   def find_or_create_subscriptable
     return if find_subscriptable
@@ -45,11 +44,9 @@ class CreateSubscriptionService
     errors.merge!(subscriptable.errors) unless subscriptable.save
   end
 
-  def find_subscriptable
-  end
+  def find_subscriptable; end
 
-  def build_subscriptable
-  end
+  def build_subscriptable; end
 
   def subscription_exists?
     return unless user.subscriptions
@@ -59,5 +56,5 @@ class CreateSubscriptionService
                       )
 
     errors.add(:base, "subscription already exists")
-  end  
+  end
 end

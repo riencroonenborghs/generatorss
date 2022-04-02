@@ -1,7 +1,7 @@
 class Discord::Api::ChannelService
   include AppService
 
-  def initialize(client: nil, channel_id:)
+  def initialize(channel_id:, client: nil)
     @client = client || Discord::Api::Client.new
     @channel_id = channel_id
   end
@@ -34,4 +34,3 @@ class Discord::Api::ChannelService
 
   attr_reader :client, :channel_id
 end
-

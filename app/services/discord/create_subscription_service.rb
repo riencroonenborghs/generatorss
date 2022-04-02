@@ -11,6 +11,7 @@ class Discord::CreateSubscriptionService < CreateSubscriptionService
     service = Discord::Api::ChannelService.new(channel_id: input)
     @channel = service.details
     errors.merge!(service.errors) and return unless service.success?
+
     errors.add(:base, "cannot find channel details") unless channel
   end
 

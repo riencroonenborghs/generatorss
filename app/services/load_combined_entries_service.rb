@@ -40,7 +40,7 @@ class LoadCombinedEntriesService
                       itemable_type: "Website",
                       itemable_id: itemables_for("Website")
                     )
-    
+
     discord_channel_scope = scope
                             .where(
                               itemable_type: "DiscordChannel",

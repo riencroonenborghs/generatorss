@@ -112,7 +112,7 @@ RSpec.describe Website::CreateSubscriptionService, type: :service do
       website = Website.last
       expect(website.url).to eq url
       expect(website.rss_url).to eq rss_url
-      expect(website.name ).to eq name
+      expect(website.name).to eq name
     end
   end
 end

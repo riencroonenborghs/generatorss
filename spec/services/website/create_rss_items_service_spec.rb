@@ -91,11 +91,11 @@ RSpec.describe Website::CreateRssItemsService, type: :service do
         allow(loader).to receive(:success?).and_return(true)
         allow(LoadUrlDataService).to receive(:call).and_return(loader)
       end
-    
+
       def create_rss_entries(number)
         parsed_data = Feedjira.parse(data)
         entries = parsed_data.entries
-    
+
         website.rss_items.create!(
           entries.slice(0, number).map do |entry|
             {

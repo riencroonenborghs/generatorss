@@ -3,7 +3,7 @@ class Twitter::Api::Client
   include HTTParty
 
   base_uri "https://api.twitter.com/2"
-  headers "Authorization": "Bearer #{ENV['TWITTER_BEARER_TOKEN']}"
+  headers Authorization: "Bearer #{ENV['TWITTER_BEARER_TOKEN']}"
 
   def get(url, query: {})
     self.class.get(url, query: query)

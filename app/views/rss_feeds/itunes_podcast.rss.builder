@@ -5,7 +5,7 @@ xml.rss(
   "xmlns:content" => "http://purl.org/rss/1.0/modules/content/",
   "xmlns:googleplay" => "http://www.google.com/schemas/play-podcasts/1.0",
   "xmlns:itunes" => "http://www.itunes.com/dtds/podcast-1.0.dtd"
-  ) do
+) do
   xml.channel do
     xml.tag!("atom:link", href: @subscription.subscriptable.rss_url, rel: "self", title: "MP3 Audio", type: "application/atom+xml")
     xml.title @channel.title
@@ -26,14 +26,18 @@ xml.rss(
       xml.item do
         xml.tag!("guid", isPermaLink: false) { xml.text! item.guid }
         xml.title item.title
-        xml.description do
-          xml.cdata!(item.description)
-        end if item.description
+        if item.description
+          xml.description do
+            xml.cdata!(item.description)
+          end
+        end
         xml.pubDate(item.published_at.iso8601)
         xml.link item.link
-        xml.tag!("content:encoded") do
-          xml.cdata!(item.description)
-        end if item.description
+        if item.description
+          xml.tag!("content:encoded") do
+            xml.cdata!(item.description)
+          end
+        end
         xml.enclosure(url: item.enclosure_url, length: item.enclosure_length, type: item.enclosure_type) if item.enclosure?
         xml.itunesTitle item.itunes_title
         xml.itunesAuthor item.itunes_author

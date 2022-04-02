@@ -20,9 +20,8 @@ class LoadRssItemsService
   end
 
   def rss_items_tag
-    @rss_items_tag ||= @subscriptable.class == YoutubeChannel ? :entry : :item
+    @rss_items_tag ||= @subscriptable.is_a?(YoutubeChannel) ? :entry : :item
   end
-    
 
   private
 

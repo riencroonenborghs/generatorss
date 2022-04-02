@@ -50,7 +50,7 @@ RSpec.describe Discord::CreateSubscriptionService, type: :service do
       details = Discord::Api::Channel.new(
         id: 1,
         guild_id: guild_id,
-        name: name, 
+        name: name,
         topic: topic
       )
       allow(service).to receive(:success?).and_return(true)
@@ -60,7 +60,7 @@ RSpec.describe Discord::CreateSubscriptionService, type: :service do
       expect { subject.call }.to change(DiscordChannel, :count).by(1)
       discord_channel = DiscordChannel.last
       expect(discord_channel.guild_id).to eq guild_id
-      expect(discord_channel.name ).to eq name
+      expect(discord_channel.name).to eq name
       expect(discord_channel.description).to eq topic
     end
   end

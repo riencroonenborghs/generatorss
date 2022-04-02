@@ -1,6 +1,6 @@
 class Filter < ApplicationRecord
   VALID_COMPARISONS = %w[eq ne].freeze
-  COMPARISONS = { "Contains": "eq", "Does not contain": "ne" }.freeze
+  COMPARISONS = { Contains: "eq", "Does not contain": "ne" }.freeze
 
   belongs_to :user
 

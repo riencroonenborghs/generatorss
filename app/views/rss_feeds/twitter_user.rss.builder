@@ -15,9 +15,11 @@ xml.rss(version: "2.0", "xmlns:atom" => "http://www.w3.org/2005/Atom") do
         xml.link item.link
         xml.pubDate(item.published_at.iso8601)
         xml.guid item.guid
-        xml.description do
-          xml.cdata!(item.description)
-        end if item.description
+        if item.description
+          xml.description do
+            xml.cdata!(item.description)
+          end
+        end
       end
     end
   end

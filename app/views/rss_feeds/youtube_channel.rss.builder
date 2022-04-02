@@ -3,10 +3,10 @@ xml.feed(
   "xmlns:yt" => "http://www.youtube.com/xml/schemas/2015",
   "xmlns:media" => "http://search.yahoo.com/mrss/",
   xmlns: "http://www.w3.org/2005/Atom"
-  ) do
+) do
   xml.link(rel: :self, href: @channel.link)
   xml.id "yt:channel:#{@subscription.subscriptable.channel_id}"
-  xml.tag!("yt:channelId") {  xml.text! @subscription.subscriptable.channel_id }
+  xml.tag!("yt:channelId") { xml.text! @subscription.subscriptable.channel_id }
   xml.title @channel.title
   xml.link(ref: "alternate", href: "https://www.youtube.com/channel/#{@subscription.subscriptable.channel_id}")
   xml.published @channel.last_build_date
@@ -15,9 +15,9 @@ xml.feed(
     xml.entry do
       xml.id { xml.text! item.guid }
       xml.tag!("yt:videoId") { xml.text! item.youtube_video_id }
-      xml.tag!("yt:channelId") {  xml.text! @subscription.subscriptable.channel_id }
+      xml.tag!("yt:channelId") { xml.text! @subscription.subscriptable.channel_id }
       xml.title item.title
-      xml.link(ref: "alternate", href: item.link) 
+      xml.link(ref: "alternate", href: item.link)
       xml.published(item.published_at.iso8601)
       if item.media?
         xml.tag!("media:group") do

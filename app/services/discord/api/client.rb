@@ -10,8 +10,8 @@ class Discord::Api::Client
     body = JSON.parse(response.body)
     return body if response.success?
 
-    self.errors.add(:base, body["message"])
+    self.errors.add(:base, body["message"]) # rubocop:disable Style/RedundantSelf
   rescue StandardError => e
-    self.errors.add(:base, e.message)
+    self.errors.add(:base, e.message) # rubocop:disable Style/RedundantSelf
   end
 end

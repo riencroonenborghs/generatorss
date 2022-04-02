@@ -8,35 +8,35 @@ class Twitter::CreateSubscriptionService < CreateSubscriptionService
   attr_reader :name, :twitter_api_user
 
   def process_input
-    get_name
+    find_name
     return unless success?
 
-    get_twitter_api_user
+    find_twitter_api_user
     return unless success?
   end
 
-  def get_name
+  def find_name
     if input.match?(/twitter\.com/)
-      get_name_from_url
+      find_name_from_url
     elsif input.starts_with?("@")
-      get_name_from_handle
+      find_name_from_handle
     else
       errors.add(:base, "not a Twitter URL or handle")
     end
   end
 
-  def get_name_from_url
+  def find_name_from_url
     uri = URI.parse(input)
     @name = uri.path.slice(1..)
     errors.add(:base, "missing name from Twitter URL") unless name.present?
   end
 
-  def get_name_from_handle
+  def find_name_from_handle
     @name = input.slice(1..)
     errors.add(:base, "missing name from Twitter handle") unless name.present?
   end
 
-  def get_twitter_api_user
+  def find_twitter_api_user
     service = Twitter::Api::UsersService.new
     @twitter_api_user = service.find_by(username: name)
     errors.merge!(service.errors) and return unless service.success?

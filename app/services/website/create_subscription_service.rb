@@ -23,6 +23,8 @@ class Website::CreateSubscriptionService < CreateSubscriptionService
     errors.add(:base, "URL has no data") unless data
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def parse_url_data
     document = Nokogiri::HTML.parse(data)
 
@@ -41,6 +43,8 @@ class Website::CreateSubscriptionService < CreateSubscriptionService
     @rss_url = feeds_service.rss_feeds&.first&.href
     errors.add(:base, "no RSS URL found") and return unless rss_url
   end
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def find_subscriptable
     @subscriptable = Website.find_by(rss_url: rss_url)

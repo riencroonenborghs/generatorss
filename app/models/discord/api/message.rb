@@ -1,4 +1,4 @@
-class Discord::Api::Message < Struct.new(:id, :content, :embeds, :timestamp, keyword_init: true)
+Discord::Api::Message = Struct.new(:id, :content, :embeds, :timestamp, keyword_init: true) do
   def self.build_from(json)
     message = new(
       id: json["id"],
@@ -14,6 +14,7 @@ class Discord::Api::Message < Struct.new(:id, :content, :embeds, :timestamp, key
   def self.process(message)
     message.embeds.each do |embed|
       next unless embed.link?
+
       message.content = message.content.gsub(embed.url, "<a href='#{embed.url}' target='_blank'>#{embed.title}</a>")
     end
 
@@ -22,7 +23,7 @@ class Discord::Api::Message < Struct.new(:id, :content, :embeds, :timestamp, key
 
   def as_rss_item
     link = embeds.any? ? embeds.last.url : "http://foo.bar.baz"
-    title = ActionController::Base.helpers.strip_tags content.split(/[\n]/)[0]
+    title = ActionController::Base.helpers.strip_tags content.split(/\n/)[0]
 
     RssItem.new(
       title: title,

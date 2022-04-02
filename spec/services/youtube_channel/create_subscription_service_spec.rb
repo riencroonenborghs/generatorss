@@ -45,7 +45,7 @@ RSpec.describe YoutubeChannel::CreateSubscriptionService, type: :service do
       youtube_channel = YoutubeChannel.last
       expect(youtube_channel.url).to eq url
       expect(youtube_channel.rss_url).to eq rss_url
-      expect(youtube_channel.name ).to eq name
+      expect(youtube_channel.name).to eq name
       expect(youtube_channel.image_url).to eq image_url
     end
   end

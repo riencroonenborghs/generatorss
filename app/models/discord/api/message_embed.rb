@@ -1,4 +1,4 @@
-class Discord::Api::MessageEmbed < Struct.new(:type, :url, :title, keyword_init: true)
+Discord::Api::MessageEmbed = Struct.new(:type, :url, :title, keyword_init: true) do
   def self.build_from(json)
     new(
       type: json["type"],

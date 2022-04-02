@@ -20,11 +20,9 @@ class CreateRssItemsService
 
   attr_reader :subscriptable, :last_loaded, :new_entries
 
-  def load_new_entries
-  end
+  def load_new_entries; end
 
-  def entries_to_add
-  end
+  def entries_to_add; end
 
   def create_new_rss_items
     subscriptable.transaction do
@@ -39,10 +37,14 @@ class CreateRssItemsService
           description: description,
           guid: entry_guid(entry)
         }
-        %i[media_title media_url media_type media_width media_height media_thumbnail_url media_thumbnail_width media_thumbnail_height enclosure_length enclosure_type enclosure_url itunes_duration itunes_episode_type itunes_author itunes_explicit itunes_image itunes_title
-        itunes_summary].each do |media|
+        %i[
+          media_title media_url media_type media_width media_height media_thumbnail_url
+          media_thumbnail_width media_thumbnail_height enclosure_length enclosure_type enclosure_url
+          itunes_duration itunes_episode_type itunes_author itunes_explicit itunes_image itunes_title
+          itunes_summary
+        ].each do |media|
           hash[media] = entry.send(media) if entry.respond_to?(media)
-        end   
+        end
 
         hash
       end

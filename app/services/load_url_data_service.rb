@@ -24,6 +24,6 @@ class LoadUrlDataService
   end
 
   def headers
-    { "User-Agent" => "GeneratoRSS/1.0"}
+    { "User-Agent" => "GeneratoRSS/1.0" }
   end
 end

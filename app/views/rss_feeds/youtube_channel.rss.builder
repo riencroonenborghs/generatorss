@@ -24,8 +24,10 @@ xml.feed(
           xml.tag!("media:title") { xml.text! item.media_title }
           xml.tag!("media:content", url: item.media_url, type: item.media_type, width: item.media_width, height: item.media_height)
           xml.tag!("media:thumbnail", url: item.media_thumbnail_url, width: item.media_thumbnail_width, height: item.media_thumbnail_height)
-          xml.tag!("media:description") do
-            xml.cdata!(item.description)
+          if item.description
+            xml.tag!("media:description") do
+              xml.cdata!(item.description)
+            end
           end
         end
       end

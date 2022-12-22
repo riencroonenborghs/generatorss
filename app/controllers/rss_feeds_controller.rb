@@ -3,7 +3,7 @@ class RssFeedsController < ApplicationController
   # rubocop:disable Metrics/CyclomaticComplexity
   def show
     @subscription = Subscription.includes(:user)
-                                .includes(subscriptable: %i[twitter_user youtube_channel website discord_channel])
+                                .includes(subscriptable: %i[twitter_user youtube_channel website discord_channel subreddit])
                                 .find_by(uuid: params[:uuid])
     redirect_to root_path and return unless @subscription
 
@@ -39,6 +39,11 @@ class RssFeedsController < ApplicationController
                    subscriptable: @subscription.subscriptable,
                    user: @subscription.user
                  )
+               when Subreddit
+                 Subreddit::LoadRssItemsService.call(
+                   subscriptable: @subscription.subscriptable,
+                   user: @subscription.user
+                 )
                else
                  redirect_to root_path and return
                end
@@ -56,6 +61,8 @@ class RssFeedsController < ApplicationController
         format.rss { render "discord_channel" }
       when ItunesPodcast
         format.rss { render "itunes_podcast" }
+      when Subreddit
+        format.rss { render "subreddit" }
       end
     end
   end

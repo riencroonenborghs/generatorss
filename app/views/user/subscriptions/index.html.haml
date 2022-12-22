@@ -26,6 +26,9 @@
         - elsif subscription.subscriptable.is_a?(ItunesPodcast)
           - itunes_podcast = subscription.subscriptable
           = render "itunes_podcast", itunes_podcast: itunes_podcast, subscription: subscription
+        - elsif subscription.subscriptable.is_a?(Subreddit)
+          - subreddit = subscription.subscriptable
+          = render "subreddit", subreddit: subreddit, subscription: subscription
 
 
     - if @subscription_count > 10

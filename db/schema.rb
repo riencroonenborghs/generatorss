@@ -10,20 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_03_15_075918) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_05_044745) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "admins", force: :cascade do |t|
-    t.string "email", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+  create_table "discord_channels", force: :cascade do |t|
+    t.string "channel_id", null: false
+    t.string "guild_id", null: false
+    t.string "name", null: false
+    t.string "description"
+    t.datetime "last_loaded"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_admins_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_admins_on_reset_password_token", unique: true
+    t.index ["channel_id"], name: "index_discord_channels_on_channel_id"
+    t.index ["last_loaded"], name: "index_discord_channels_on_last_loaded"
   end
 
   create_table "filters", force: :cascade do |t|
@@ -32,36 +32,20 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_15_075918) do
     t.string "value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id", "value"], name: "index_filters_on_user_id_and_value"
     t.index ["user_id"], name: "index_filters_on_user_id"
   end
 
-  create_table "orders", force: :cascade do |t|
-    t.bigint "plan_id", null: false
-    t.bigint "user_id", null: false
-    t.integer "status", default: 0
-    t.string "token"
-    t.string "charge_id"
-    t.string "error_message"
-    t.string "customer_id"
-    t.integer "payment_gateway"
-    t.integer "price_cents"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["plan_id"], name: "index_orders_on_plan_id"
-    t.index ["user_id"], name: "index_orders_on_user_id"
-  end
-
-  create_table "plans", force: :cascade do |t|
+  create_table "itunes_podcasts", force: :cascade do |t|
+    t.datetime "last_loaded"
+    t.string "podcast_id", null: false
+    t.string "url", null: false
+    t.string "rss_url", null: false
     t.string "name", null: false
-    t.string "stripe_plan_name", null: false
-    t.integer "price_cents", null: false
-    t.integer "max_subscriptions", default: 3, null: false
-    t.integer "posts_per_subscription", default: 5, null: false
-    t.integer "refresh_after_minutes", default: 1440, null: false
-    t.integer "clean_after_days", default: 7, null: false
-    t.integer "filter_rules", default: 0, null: false
+    t.string "image_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["podcast_id"], name: "index_itunes_podcasts_on_podcast_id"
   end
 
   create_table "rss_items", force: :cascade do |t|
@@ -82,20 +66,46 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_15_075918) do
     t.integer "media_thumbnail_height"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "enclosure_length"
+    t.string "enclosure_type"
+    t.string "enclosure_url"
+    t.string "itunes_duration"
+    t.string "itunes_episode_type"
+    t.string "itunes_author"
+    t.boolean "itunes_explicit"
+    t.string "itunes_image"
+    t.string "itunes_title"
+    t.string "itunes_summary"
+    t.index ["itemable_id"], name: "index_rss_items_on_itemable_id"
     t.index ["itemable_type", "itemable_id"], name: "index_rss_items_on_itemable"
+    t.index ["itemable_type", "itemable_id"], name: "index_rss_items_on_itemable_type_and_itemable_id"
+    t.index ["itemable_type"], name: "index_rss_items_on_itemable_type"
+    t.index ["published_at"], name: "index_rss_items_on_published_at"
+  end
+
+  create_table "subreddits", force: :cascade do |t|
+    t.datetime "last_loaded"
+    t.string "url", null: false
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["last_loaded"], name: "index_subreddits_on_last_loaded"
   end
 
   create_table "subscriptions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.string "subscriptable_type", null: false
     t.bigint "subscriptable_id", null: false
-    t.boolean "active", default: true, null: false
     t.text "uuid", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["active"], name: "index_subscriptions_on_active"
+    t.index ["subscriptable_id"], name: "index_subscriptions_on_subscriptable_id"
     t.index ["subscriptable_type", "subscriptable_id"], name: "index_subscriptions_on_subscriptable"
+    t.index ["subscriptable_type", "subscriptable_id"], name: "index_subscriptions_on_subscriptable_type_and_subscriptable_id"
+    t.index ["subscriptable_type"], name: "index_subscriptions_on_subscriptable_type"
+    t.index ["user_id", "subscriptable_type", "subscriptable_id"], name: "sub_user_full_subscriptable"
     t.index ["user_id"], name: "index_subscriptions_on_user_id"
+    t.index ["uuid"], name: "index_subscriptions_on_uuid"
   end
 
   create_table "tweets", force: :cascade do |t|
@@ -123,6 +133,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_15_075918) do
     t.boolean "verified", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["last_loaded"], name: "index_twitter_users_on_last_loaded"
     t.index ["twitter_id"], name: "index_twitter_users_on_twitter_id"
   end
 
@@ -147,14 +158,22 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_15_075918) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "uuid", null: false
-    t.string "stripe_customer_id"
-    t.string "stripe_subscription_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-    t.index ["stripe_customer_id"], name: "index_users_on_stripe_customer_id"
-    t.index ["stripe_subscription_id"], name: "index_users_on_stripe_subscription_id"
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
+  end
+
+  create_table "websites", force: :cascade do |t|
+    t.datetime "last_loaded"
+    t.string "url"
+    t.string "rss_url"
+    t.string "name"
+    t.string "image_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["last_loaded"], name: "index_websites_on_last_loaded"
+    t.index ["rss_url"], name: "index_websites_on_rss_url"
   end
 
   create_table "youtube_channels", force: :cascade do |t|
@@ -165,6 +184,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_15_075918) do
     t.string "image_url", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["last_loaded"], name: "index_youtube_channels_on_last_loaded"
+    t.index ["rss_url"], name: "index_youtube_channels_on_rss_url"
   end
 
   create_table "youtube_rss_entries", force: :cascade do |t|
@@ -174,12 +195,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_03_15_075918) do
     t.json "data", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["entry_id"], name: "index_youtube_rss_entries_on_entry_id"
+    t.index ["published_at"], name: "index_youtube_rss_entries_on_published_at"
     t.index ["youtube_channel_id"], name: "index_youtube_rss_entries_on_youtube_channel_id"
   end
 
   add_foreign_key "filters", "users"
-  add_foreign_key "orders", "plans"
-  add_foreign_key "orders", "users"
   add_foreign_key "subscriptions", "users"
   add_foreign_key "tweets", "twitter_users"
   add_foreign_key "youtube_rss_entries", "youtube_channels"

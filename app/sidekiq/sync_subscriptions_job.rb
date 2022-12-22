@@ -13,6 +13,8 @@ class SyncSubscriptionsJob
         SyncWebsiteJob.perform_async(id)
       when "DiscordChannel"
         SyncDiscordChannelJob.perform_async(id)
+      when "Subreddit"
+        SyncSubredditJob.perform_async(id)
       else
         SyncItunesPodcastJob.perform_async(id)
       end

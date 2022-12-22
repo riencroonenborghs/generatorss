@@ -19,6 +19,6 @@ module GeneratoRSS
     config.time_zone = "Wellington"
     # config.eager_load_paths << Rails.root.join("extras")
     config.active_job.queue_adapter = :sidekiq
-    config.active_record.schema_format = :sql
+    # config.active_record.schema_format = :sql
   end
 end

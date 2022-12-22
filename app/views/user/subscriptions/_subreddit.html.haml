@@ -1,0 +1,9 @@
+%li.list-group-item
+  .d-flex.flex-row.justify-content-between
+    .d-flex.flex-row
+      = fa_brands "reddit", options: { class: "reddit" }, size: 3
+      .d-flex.flex-column.ps-4
+        = fa_brands "reddit", options: { class: "reddit" }, size: 1
+        %h3
+          = link_to subreddit.name, subreddit.url, target: "_blank"
+    = render "buttons", subscription: subscription
